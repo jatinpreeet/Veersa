@@ -6,7 +6,9 @@ from vosk import Model, KaldiRecognizer
 import soundfile as sf
 from io import BytesIO
 
+# basic model
 # Initialize Vosk with small model (auto-downloads if missing)
+
 try:
     model = Model(lang="en-us")
 except Exception as e:
@@ -18,7 +20,7 @@ MEDICATION_PATTERN = r"\b(aspirin|lisinopril|metformin|warfarin|atorvastatin|ibu
 SYMPTOM_PATTERN = r"\b(cough|nausea|dizziness|rash|headache|vomiting|fatigue|swelling)\b"
 
 def transcribe_audio(audio_file):
-    """Transcribe audio using Vosk with error handling"""
+
     try:
         data, samplerate = sf.read(BytesIO(audio_file.read()))
         recognizer = KaldiRecognizer(model, samplerate)
@@ -35,14 +37,14 @@ def transcribe_audio(audio_file):
         return ""
 
 def extract_entities(text):
-    """Enhanced entity extraction with normalization"""
+    
     text = text.lower()
     meds = list(set(re.findall(MEDICATION_PATTERN, text)))
     symptoms = list(set(re.findall(SYMPTOM_PATTERN, text)))
     return meds, symptoms
 
 def get_fda_events(medication):
-    """Safe FDA API call"""
+    
     try:
         response = requests.get(
             "https://api.fda.gov/drug/event.json",
@@ -61,7 +63,7 @@ def get_fda_events(medication):
         return []
 
 # Streamlit UI
-st.title("Adverse Event Checker 🚨")
+st.title("Adverse Event Checker")
 st.write("Upload a conversation audio file or enter text below")
 
 # Input section
@@ -109,7 +111,7 @@ if text:
                     st.success("No matching adverse effects detected")
                     st.write("Known effects:", ", ".join([ae.capitalize() for ae in adverse_events]))
 
-# Add sample input
+# sample input
 st.markdown("---")
 st.subheader("Sample Input")
 st.code("Patient has been taking aspirin for a week but now reports severe headache and nausea.")
